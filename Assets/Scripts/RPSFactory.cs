@@ -1,4 +1,11 @@
-﻿using System.Collections;
+﻿/*
+ * Jake Buri
+ * RPSGame.cs
+ * Assignment 5
+ * Factory to create either a rock, paper, or scissor
+ */
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
