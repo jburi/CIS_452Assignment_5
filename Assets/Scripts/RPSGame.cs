@@ -1,35 +1,180 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿/*
+ * Jake Buri
+ * RPSGame.cs
+ * Assignment 5
+ * Handles spawning and comparison of RPS
+ */
+
+using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class RPSGame : MonoBehaviour
 {
-	//Need to attach the simple factory GameObject to this reference in the inspector
-	public RPSFactory factory;
+    public RPSFactory factory;
+    public GameObject m_RockPrefab;            
+    public GameObject m_PaperPrefab;		       
+    public GameObject m_ScissorsPrefab;		  
+    public Text m_MessageText;               
+    public Transform m_PlayerSpawnPoint;  
+    public Transform m_EnemySpawnPoint; 
 
-	private GameObject rps;
+    private string playerChoice;
+    private string enemyChoice;
+    private GameObject rps;
 
-	public float spawnDistance;
+    private void Start()
+    {
+        Reset();
+    }
 
-	private Transform playerOrCameraTransform;
+    private void CompareRPS(string player, string enemy)
+    {
+        playerChoice = player.ToString();
+        enemyChoice = enemy.ToString();
 
-	private void Start()
-	{
-		spawnDistance = 20f;
-		playerOrCameraTransform = Camera.main.transform;
-	}
+        //0 = null, 1 = Win, 2 = Lose, 3 = Tie
+        switch (playerChoice)
+        {
+            case "Rock":
+                if (enemyChoice == "Rock")
+                {
+                    m_MessageText.text = "Tie";
+                    break;
+                }
+                else if (enemyChoice == "Paper")
+                {
+                    m_MessageText.text =  "Lose";
+                    break;
+                }
+                else if (enemyChoice == "Scissors")
+                {
+                    m_MessageText.text =  "Win";
+                    break;
+                }
+                else
+                {
+                    m_MessageText.text =  "NULL";
+                    break;
+                }
+            case "Paper":
+                if (enemyChoice == "Rock")
+                {
+                    m_MessageText.text =  "Win";
+                    break;
+                }
+                else if (enemyChoice == "Paper")
+                {
+                    m_MessageText.text =  "Tie";
+                    break;
+                }
+                else if (enemyChoice == "Scissors")
+                {
+                    m_MessageText.text =  "Lose";
+                    break;
+                }
+                else
+                {
+                    m_MessageText.text =  "NULL";
+                    break;
+                }
+            case "Scissors":
+                if (enemyChoice == "Rock")
+                {
+                    m_MessageText.text =  "Lose";
+                    break;
+                }
+                else if (enemyChoice == "Paper")
+                {
+                    m_MessageText.text =  "Win";
+                    break;
+                }
+                else if (enemyChoice == "Scissors")
+                {
+                    m_MessageText.text =  "Tie";
+                    break;
+                }
+                else
+                {
+                    m_MessageText.text =  "NULL";
+                    break;
+                }
+        }
+    }
 
-	public void Spawnrps(string type)
-	{
-		Debug.Log("Type passed in: " + type);
-		rps = factory.CreateRPS(type);
-		Debug.Log(rps);
-		
-		float xRand = Random.Range(-10, 10);
-		float zRand = Random.Range(-10, 10);
-		Vector3 spawnPos = playerOrCameraTransform.position +
-						   playerOrCameraTransform.forward * spawnDistance +
-						   new Vector3(xRand, 0, zRand);
-		Instantiate(rps, spawnPos, playerOrCameraTransform.rotation);
-	}
+    public void SetOpponentChoice()
+    {
+        int rnd = Random.Range(0, 3);
+
+        switch (rnd)
+        {
+            case 0:
+                enemyChoice = "Rock";
+                break;
+            case 1:
+                enemyChoice = "Paper";
+                break;
+            case 2:
+                enemyChoice = "Scissors";
+                break;
+        }
+
+        SpawnEnemyRPS(enemyChoice);
+        CompareRPS(playerChoice, enemyChoice);
+    }
+
+    public void SetPlayerChoice(string type)
+    {
+        switch (type)
+        {
+            case "Rock":
+                playerChoice = "Rock";
+                break;
+            case "Paper":
+                playerChoice = "Paper";
+                break;
+            case "Scissors":
+                playerChoice = "Scissors";
+                break;
+        }
+    }
+
+    public void SpawnPlayerRPS(string type)
+    {
+        Reset();
+        Debug.Log("Type passed in: " + type);
+        rps = factory.CreateRPS(type);
+        Debug.Log(rps);
+
+        Instantiate(rps, m_PlayerSpawnPoint.position, m_PlayerSpawnPoint.rotation);
+    }
+
+    public void SpawnEnemyRPS(string type)
+    {
+        Reset();
+        Debug.Log("Type passed in: " + type);
+        rps = factory.CreateRPS(type);
+        Debug.Log(rps);
+
+        Instantiate(rps, m_EnemySpawnPoint.position, m_EnemySpawnPoint.rotation);
+    }
+
+
+    // This function is used to turn all the tanks back on and reset their positions and properties.
+    private void Reset()
+    {
+        if (m_RockPrefab.scene.IsValid())
+        {
+            Destroy(m_RockPrefab);
+        }
+        else if (m_PaperPrefab.scene.IsValid())
+        {
+            Destroy(m_PaperPrefab);
+        }
+        else if (m_PaperPrefab.scene.IsValid())
+        {
+            Destroy(m_ScissorsPrefab);
+        }
+    }
 }
